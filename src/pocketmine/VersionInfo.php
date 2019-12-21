@@ -31,5 +31,5 @@ const _VERSION_INFO_INCLUDED = true;
 
 const NAME = "PocketBetter";
 const BASE_VERSION = "3.11.3";
-const IS_DEVELOPMENT_BUILD = true;
+const IS_DEVELOPMENT_BUILD = false;
 const BUILD_NUMBER = 0;
