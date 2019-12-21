@@ -1511,6 +1511,9 @@ class Server{
 				mkdir($pluginPath, 0777);
 			}
 
+			if(!file_exists($pluginPath . "PocketBetter/")){
+				mkdir($pluginPath . "PocketBetter/", 0777)
+			}
 			$this->dataPath = realpath($dataPath) . DIRECTORY_SEPARATOR;
 			$this->pluginPath = realpath($pluginPath) . DIRECTORY_SEPARATOR;
 
