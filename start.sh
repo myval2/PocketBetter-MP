@@ -2,6 +2,8 @@
 DIR="$(cd -P "$( dirname "${BASH_SOURCE[0]}" )" && pwd)"
 cd "$DIR"
 
+DO_LOOP="no"
+
 while getopts "p:f:l" OPTION 2> /dev/null; do
 	case ${OPTION} in
 		p)
@@ -34,9 +36,10 @@ fi
 if [ "$POCKETMINE_FILE" == "" ]; then
 	if [ -f ./PocketMine-MP.phar ]; then
 		POCKETMINE_FILE="./PocketMine-MP.phar"
+	elif [ -f ./src/pocketmine/PocketMine.php ]; then
+		POCKETMINE_FILE="./src/pocketmine/PocketMine.php"
 	else
-		echo "PocketMine-MP.phar not found"
-		echo "Downloads can be found at https://github.com/pmmp/PocketMine-MP/releases"
+		echo "Couldn't find a valid PocketMine-MP installation"
 		exit 1
 	fi
 fi
@@ -44,18 +47,19 @@ fi
 LOOPS=0
 
 set +e
-
-if [ "$DO_LOOP" == "yes" ]; then
-	while true; do
+while [ "$LOOPS" -eq 0 ] || [ "$DO_LOOP" == "yes" ]; do
+	if [ "$DO_LOOP" == "yes" ]; then
+		"$PHP_BINARY" "$POCKETMINE_FILE" $@
+	else
+		exec "$PHP_BINARY" "$POCKETMINE_FILE" $@
+	fi
+	if [ "$DO_LOOP" == "yes" ]; then
 		if [ ${LOOPS} -gt 0 ]; then
 			echo "Restarted $LOOPS times"
 		fi
-		"$PHP_BINARY" "$POCKETMINE_FILE" $@
 		echo "To escape the loop, press CTRL+C now. Otherwise, wait 5 seconds for the server to restart."
 		echo ""
 		sleep 5
 		((LOOPS++))
-	done
-else
-	exec "$PHP_BINARY" "$POCKETMINE_FILE" $@
-fi
+	fi
+done
